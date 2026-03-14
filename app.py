@@ -1,12 +1,17 @@
 import streamlit as st
 from resume_parser import extract_text_from_pdf
-from skill_analyzer import extract_skills
+from skill_analyzer import extract_skills, skill_gap_analysis
 
 st.title("AI Career Copilot 🚀")
 
 st.write("Upload your resume to analyze your skills")
 
 uploaded_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
+
+role = st.selectbox(
+    "Select Target Role",
+    ["Data Analyst", "Machine Learning Engineer", "Backend Developer"]
+)
 
 if uploaded_file is not None:
 
@@ -16,8 +21,15 @@ if uploaded_file is not None:
 
     st.subheader("Detected Skills")
 
-    if skills:
-        for skill in skills:
-            st.write("✅", skill)
+    for skill in skills:
+        st.write("✅", skill)
+
+    missing_skills = skill_gap_analysis(skills, role)
+
+    st.subheader("Missing Skills for " + role)
+
+    if missing_skills:
+        for skill in missing_skills:
+            st.write("❌", skill)
     else:
-        st.write("No skills detected")
+        st.write("You already have all required skills!")
